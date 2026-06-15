@@ -40,6 +40,15 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+# When deployed on Vercel, the platform exposes VERCEL_URL.
+vercel_url = os.getenv('VERCEL_URL')
+if vercel_url:
+    ALLOWED_HOSTS.extend(
+        host.strip()
+        for host in {vercel_url, f'www.{vercel_url}'}
+        if host.strip()
+    )
+
 # Application definition
 
 INSTALLED_APPS = [
