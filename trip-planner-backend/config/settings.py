@@ -34,11 +34,7 @@ ORS_API_KEY = os.getenv('ORS_API_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,backend').split(',')
-    if host.strip()
-]
+ALLOWED_HOSTS = ["*"]
 
 # When deployed on Vercel, the platform exposes VERCEL_URL.
 vercel_url = os.getenv('VERCEL_URL')
