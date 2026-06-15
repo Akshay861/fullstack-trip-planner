@@ -1,0 +1,10 @@
+[project]
+name = "trip-planner-backend"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[tool.vercel]
+entrypoint = "config.wsgi:application"
+
+[tool.vercel.scripts]
+build = "python manage.py migrate --noinput"

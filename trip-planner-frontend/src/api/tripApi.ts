@@ -36,8 +36,8 @@ export async function planTrip(payload: TripRequest): Promise<TripPlanResponse> 
     } catch {
       const hint =
         response.status === 400 && text.includes('Bad Request')
-          ? 'The API rejected the request (often ALLOWED_HOSTS when not using Docker/nginx). Rebuild with docker compose up -d --build, or open the app via http://localhost:8080.'
-          : `Backend returned a non-JSON response (${response.status}). Check that Django is running.`;
+          ? 'The API rejected the request (often ALLOWED_HOSTS or a missing trailing slash). Check backend deployment settings.'
+          : `Backend returned a non-JSON response (${response.status}). Check that the API is running.`;
       throw new TripPlanError(hint);
     }
 
@@ -76,7 +76,7 @@ export async function planTrip(payload: TripRequest): Promise<TripPlanResponse> 
 
     if (err instanceof TypeError) {
       throw new TripPlanError(
-        'Cannot reach the backend. Start Django (e.g. python manage.py runserver 8002) and restart the frontend.',
+        'Cannot reach the API. For local dev, start Django and the Vite dev server. On Vercel, set BACKEND_URL to your deployed API.',
       );
     }
 

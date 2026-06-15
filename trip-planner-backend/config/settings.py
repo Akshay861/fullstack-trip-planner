@@ -36,9 +36,29 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,backend').split(',')
+    for host in os.getenv(
+        'ALLOWED_HOSTS',
+        'localhost,127.0.0.1,backend,.vercel.app',
+    ).split(',')
     if host.strip()
 ]
+
+# When deployed on Vercel, the platform exposes VERCEL_URL.
+vercel_url = os.getenv('VERCEL_URL')
+if vercel_url:
+    ALLOWED_HOSTS.extend(
+        host.strip()
+        for host in {vercel_url, f'www.{vercel_url}'}
+        if host.strip()
+    )
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+if vercel_url:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{vercel_url}')
 
 # Application definition
 
@@ -130,13 +150,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
-    CORS_ALLOWED_ORIGINS = [
+    cors_origins = [
         origin.strip()
         for origin in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
         if origin.strip()
     ]
+    frontend_url = os.getenv('FRONTEND_URL', '').strip().rstrip('/')
+    if frontend_url:
+        cors_origins.append(frontend_url)
+    CORS_ALLOWED_ORIGINS = cors_origins

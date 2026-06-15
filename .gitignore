@@ -6,6 +6,7 @@ venv/
 node_modules/
 dist/
 *.sqlite3
+staticfiles/
 .DS_Store
 # Logs
 logs
